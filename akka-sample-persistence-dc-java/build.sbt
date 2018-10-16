@@ -3,13 +3,13 @@ name := "akka-sample-persistence-dc-java"
 
 enablePlugins(ProtobufPlugin)
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.7"
 
-val AkkaVersion = "2.5.16"
-val AkkaAddOnsVersion = "1.1.0"
-val AkkaPersistenceCassandraVersion = "0.89"
-val AkkaHttpVersion = "10.1.4"
-val AkkaClusterManagementVersion = "0.17.0"
+val AkkaVersion = "2.5.17"
+val AkkaAddOnsVersion = "1.1.3"
+val AkkaPersistenceCassandraVersion = "0.91"
+val AkkaHttpVersion = "10.1.5"
+val AkkaClusterManagementVersion = "0.18.0"
 
 credentials += Credentials(Path.userHome / ".lightbend" / "commercial.credentials")
 resolvers += "com-mvn" at "https://repo.lightbend.com/commercial-releases/"
@@ -21,6 +21,8 @@ libraryDependencies ++= Seq(
   "com.lightbend.akka" %% "akka-persistence-multi-dc-testkit" % AkkaAddOnsVersion,
   "com.lightbend.akka" %% "akka-split-brain-resolver" % AkkaAddOnsVersion,
   "com.lightbend.akka" %% "akka-diagnostics" % AkkaAddOnsVersion,
+  "com.typesafe.akka" %% "akka-cluster-sharding" % AkkaVersion,
+  "com.typesafe.akka" %% "akka-persistence-query" % AkkaVersion,
   "com.typesafe.akka" %% "akka-slf4j" % AkkaVersion,
   "ch.qos.logback" % "logback-classic" % "1.2.3",
   "com.typesafe.akka" %% "akka-http" % AkkaHttpVersion,
