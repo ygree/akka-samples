@@ -32,3 +32,5 @@ You can run the main classes with `mvn` from a terminal window using the [Exec M
 
     mvn compile exec:java -Dexec.mainClass="sample.hello.Main2"
 
+
+Run with: `mvn compile package exec:exec`
