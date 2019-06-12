@@ -3,7 +3,6 @@ package sample.sharding
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import scala.util.Random
-
 import akka.actor._
 import akka.cluster.sharding._
 
@@ -17,12 +16,14 @@ class Devices extends Actor with ActorLogging {
 
   private val extractEntityId: ShardRegion.ExtractEntityId = {
     case msg @ Device.RecordTemperature(id, _) => (id.toString, msg)
+    case msg @ Device.GetTemperature(id) => (id.toString, msg)
   }
 
   private val numberOfShards = 100
 
   private val extractShardId: ShardRegion.ExtractShardId = {
     case Device.RecordTemperature(id, _) => (id % numberOfShards).toString
+    case Device.GetTemperature(id) => (id % numberOfShards).toString
     // Needed if you want to use 'remember entities':
     //case ShardRegion.StartEntity(id) => (id.toLong % numberOfShards).toString
   }
@@ -45,7 +46,13 @@ class Devices extends Actor with ActorLogging {
       val deviceId = random.nextInt(numberOfDevices)
       val temperature = 5 + 30 * random.nextDouble()
       val msg = Device.RecordTemperature(deviceId, temperature)
-      log.info(s"Sending $msg");
+      log.info(s"Sending $msg")
       deviceRegion ! msg
+
+      deviceRegion ! Device.GetTemperature(deviceId)
+
+    case Device.Temperature(id, temperature) =>
+      log.info(s"Getting temperature $id $temperature")
+
   }
 }
