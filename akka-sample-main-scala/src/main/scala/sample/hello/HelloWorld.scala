@@ -1,9 +1,8 @@
 package sample.hello
 
-import akka.actor.Actor
-import akka.actor.Props
+import akka.actor.{Actor, ActorLogging, Props}
 
-class HelloWorld extends Actor {
+class HelloWorld extends Actor with ActorLogging {
 
   override def preStart(): Unit = {
     // create the greeter actor
@@ -14,7 +13,9 @@ class HelloWorld extends Actor {
 
   def receive = {
     // when the greeter is done, stop this actor and with it the application
-    case Greeter.Done => context.stop(self)
+    case Greeter.Done =>
+      log.info("HelloWorld received Greeter.Done")
+      context.stop(self)
   }
 }
 
