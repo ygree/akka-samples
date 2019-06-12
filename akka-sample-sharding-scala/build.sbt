@@ -39,10 +39,10 @@ lazy val `akka-sample-sharding-scala` = project
 //      "ch.qos.logback" % "logback-classic" % "1.1.3",
 //      "com.typesafe.akka"            %% "akka-slf4j" % akkaVersion,
       Cinnamon.library.cinnamonCHMetrics,
-      Cinnamon.library.cinnamonAkka
+      Cinnamon.library.cinnamonAkka,
 
-//      Cinnamon.library.cinnamonPrometheus,
-//      Cinnamon.library.cinnamonPrometheusHttpServer
+      Cinnamon.library.cinnamonPrometheus,
+      Cinnamon.library.cinnamonPrometheusHttpServer
     )
   )
 

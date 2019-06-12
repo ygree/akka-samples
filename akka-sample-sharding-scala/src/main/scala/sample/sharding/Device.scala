@@ -2,8 +2,8 @@ package sample.sharding
 
 import akka.actor._
 import akka.pattern.pipe
+import com.lightbend.cinnamon.scala.future.named.FutureNamed
 import scala.concurrent.Future
-
 
 /**
  * This is just an example: cluster sharding would be overkill for just keeping a small amount of data,
@@ -31,10 +31,11 @@ class Device extends Actor with ActorLogging {
 
     case GetTemperature(id) =>
       // running future on redisEC
-      val calcOnRedisEC = Future {
+      val calcOnRedisEC = FutureNamed.withName("redis-call") (
+        Future {
         Thread.sleep(50)
         Temperature(id, values.head)
-      }(redisEC)
+      }(redisEC))
       // pipe the result back to the sender
       pipe(calcOnRedisEC)(context.dispatcher) to sender
   }
