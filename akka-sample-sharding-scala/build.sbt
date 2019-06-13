@@ -15,6 +15,7 @@ lazy val `akka-sample-sharding-scala` = project
     javaOptions in run ++= Seq("-Xms128m", "-Xmx1024m", "-Djava.library.path=./target/native"),
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+      "com.typesafe.akka" %% "akka-stream" % akkaVersion,
       "com.typesafe.akka" %% "akka-remote" % akkaVersion,
       "com.typesafe.akka" %% "akka-cluster" % akkaVersion,
       "com.typesafe.akka" %% "akka-cluster-metrics" % akkaVersion,
@@ -24,25 +25,27 @@ lazy val `akka-sample-sharding-scala` = project
       "org.scalatest" %% "scalatest" % "3.0.7" % Test,
       "io.kamon" % "sigar-loader" % "1.6.6-rev002"),
     fork in run := true,
-    mainClass in (Compile, run) := Some("sample.sharding.ShardingApp"),
+    //    mainClass in (Compile, run) := Some("sample.sharding.ShardingApp"),
     // disable parallel tests
     parallelExecution in Test := false,
     licenses := Seq(("CC0", url("http://creativecommons.org/publicdomain/zero/1.0")))
   )
-  .configs (MultiJvm)
+  .configs(MultiJvm)
   .enablePlugins(Cinnamon)
   .settings(
     cinnamon in run := true,
     cinnamon in test := true,
 
     libraryDependencies ++= Seq(
-//      "ch.qos.logback" % "logback-classic" % "1.1.3",
-//      "com.typesafe.akka"            %% "akka-slf4j" % akkaVersion,
-      Cinnamon.library.cinnamonCHMetrics,
-      Cinnamon.library.cinnamonAkka,
+      //      "ch.qos.logback" % "logback-classic" % "1.1.3",
+      //      "com.typesafe.akka"            %% "akka-slf4j" % akkaVersion,
 
       Cinnamon.library.cinnamonPrometheus,
-      Cinnamon.library.cinnamonPrometheusHttpServer
+      Cinnamon.library.cinnamonPrometheusHttpServer,
+
+      //      Cinnamon.library.cinnamonCHMetrics,
+
+      Cinnamon.library.cinnamonAkka
     )
   )
 
