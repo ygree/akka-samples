@@ -1,5 +1,6 @@
 organization := "com.typesafe.akka.samples"
 
+//val akkaVersion = "2.6.0-RC1"
 val akkaVersion = "2.6.0-M1"
 
 libraryDependencies ++= Seq(
