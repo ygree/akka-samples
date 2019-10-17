@@ -7,10 +7,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.persistence.typed.PersistenceId
 import akka.persistence.typed.scaladsl.EventSourcedBehavior
 import akka.persistence.typed.scaladsl.Effect
-import akka.persistence.typed.ExpectingReply
 import akka.persistence.typed.scaladsl.ReplyEffect
-
-import akka.actor.testkit.typed.scaladsl.Effects
 
 object ShoppingCart {
   /**
@@ -33,7 +30,7 @@ object ShoppingCart {
   /**
    * This interface defines all the commands that the ShoppingCart persistent actor supports.
    */
-  sealed trait Command[R] extends ExpectingReply[R]
+  sealed trait Command[R]
 
   sealed trait Result
   case object OK extends Result
@@ -80,7 +77,7 @@ object ShoppingCart {
 
   def behavior(id: String): Behavior[Command[_]] =
     EventSourcedBehavior.withEnforcedReplies[Command[_], Event, State](
-      PersistenceId(s"ShoppingCart|$id"),
+      PersistenceId("ShoppingCart", id),
       State.empty,
       (state, command) =>
         if (state.checkedOut) checkedOutShoppingCart(state, command)
@@ -92,30 +89,30 @@ object ShoppingCart {
         })
 
   def openShoppingCart(state: State, command: Command[_]): ReplyEffect[Event, State] = command match {
-    case cmd @ UpdateItem(productId, quantity, _) =>
+    case cmd @ UpdateItem(productId, quantity, replyTo) =>
       if (quantity < 0)
-        Effect.reply(cmd)(Rejected("Quantity must be greater than zero"))
+        Effect.reply(replyTo)(Rejected("Quantity must be greater than zero"))
       else if (quantity == 0 && !state.items.contains(productId))
-        Effect.reply(cmd)(Rejected("Cannot delete item that is not already in cart"))
+        Effect.reply(replyTo)(Rejected("Cannot delete item that is not already in cart"))
       else
-        Effect.persist(ItemUpdated(productId, quantity)).thenReply(cmd)(_ => OK)
+        Effect.persist(ItemUpdated(productId, quantity)).thenReply(replyTo)(_ => OK)
 
-    case cmd: Checkout =>
+    case Checkout(replyTo) =>
       if (state.items.isEmpty)
-        Effect.reply(cmd)(Rejected("Cannot checkout empty cart"))
+        Effect.reply(replyTo)(Rejected("Cannot checkout empty cart"))
       else
-        Effect.persist(CheckedOut).thenReply(cmd)(_ => OK)
+        Effect.persist(CheckedOut).thenReply(replyTo)(_ => OK)
 
-    case cmd: Get =>
-      Effect.reply(cmd)(state)
+    case Get(replyTo) =>
+      Effect.reply(replyTo)(state)
   }
 
   def checkedOutShoppingCart(state: State, command: Command[_]): ReplyEffect[Event, State] = command match {
-    case cmd: Get =>
-      Effect.reply(cmd)(state)
-    case cmd: UpdateItem =>
-      Effect.reply(cmd)(Rejected("Can't update item on already checked out shopping cart"))
-    case cmd: Checkout =>
-      Effect.reply(cmd)(Rejected("Can't checkout already checked out shopping cart"))
+    case Get(replyTo) =>
+      Effect.reply(replyTo)(state)
+    case UpdateItem(_, _, replyTo) =>
+      Effect.reply(replyTo)(Rejected("Can't update item on already checked out shopping cart"))
+    case Checkout(replyTo) =>
+      Effect.reply(replyTo)(Rejected("Can't checkout already checked out shopping cart"))
   }
 }

@@ -99,7 +99,7 @@ object SimpleRobot {
         val itemName = "Item-" + Random.nextInt(1000)
         val amount = Random.nextInt(100)
 
-        ctx.ask(cart)(ShoppingCart.UpdateItem(itemName, amount, _: ActorRef[ShoppingCart.Result])) {
+        ctx.ask(cart.ref, ShoppingCart.UpdateItem(itemName, amount, _: ActorRef[ShoppingCart.Result])) {
           case Success(ShoppingCart.OK) => CartSucceeded()
           case Success(ShoppingCart.Rejected(msg)) => CartRejected(msg)
           case Failure(e) => CartFailed(e)
