@@ -24,18 +24,19 @@ object Main extends App {
   val rootBehavior = Behaviors.setup[Result](context => {
     val persistentActor = context.spawn(ShoppingCart.behavior("test"), "test")
 
-    context.ask(persistentActor.ref, ShoppingCart.UpdateItem("foo", 32, _: ActorRef[ShoppingCart.Result])) {
+    context.ask[ShoppingCart.Command[_], ShoppingCart.Result](persistentActor.ref,
+      replyTo => ShoppingCart.UpdateItem("foo", 32, replyTo)) {
       case Success(ShoppingCart.OK) => Ok
       case e                        => Failed(e)
     }
-    context.ask(persistentActor.ref, ShoppingCart.UpdateItem("bar", 12, _: ActorRef[ShoppingCart.Result])) {
-      case Success(ShoppingCart.OK) => Ok
-      case e                        => Failed(e)
-    }
-    context.ask(persistentActor.ref, ShoppingCart.Get) {
-      case Success(ShoppingCart.State(items, _)) => Ok
-      case e                                     => Failed(e)
-    }
+//    context.ask(persistentActor.ref, ShoppingCart.UpdateItem("bar", 12, _: ActorRef[ShoppingCart.Result])) {
+//      case Success(ShoppingCart.OK) => Ok
+//      case e                        => Failed(e)
+//    }
+//    context.ask(persistentActor.ref, ShoppingCart.Get) {
+//      case Success(ShoppingCart.State(items, _)) => Ok
+//      case e                                     => Failed(e)
+//    }
     Behaviors.receive((ctx, ack) => {
       println(ack.toString)
       Behaviors.same
