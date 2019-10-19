@@ -13,9 +13,12 @@ libraryDependencies ++= Seq(
 // To enable https://developer.lightbend.com/docs/telemetry/current
 cinnamon in run := true
 //libraryDependencies += Cinnamon.library.cinnamonAkka
-enablePlugins(Cinnamon)
+enablePlugins(CinnamonAgentOnly)
 
 licenses := Seq(("CC0", url("http://creativecommons.org/publicdomain/zero/1.0")))
+
+//resolvers += Resolver.url("lightbend-commercial", url("https://repo.lightbend.com/commercial-releases"))(Resolver.ivyStylePatterns)
+//resolvers += "whateverthenameis" at "https://repo.lightbend.com/commercial-releases/"
 
 lazy val cinnamonDeps = Seq(
   //  Cinnamon.library.cinnamonJvmMetricsProducer,

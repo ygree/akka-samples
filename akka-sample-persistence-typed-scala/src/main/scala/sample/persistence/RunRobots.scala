@@ -12,7 +12,7 @@ import akka.actor.Scheduler
 object RunRobots extends App {
   implicit val timeout: Timeout = 5.seconds
 
-  val numberOfRobots = 2
+  val numberOfRobots = 1
 
   ActorSystem(RobotManager.init(numberOfRobots), "robot-manager")
 }
